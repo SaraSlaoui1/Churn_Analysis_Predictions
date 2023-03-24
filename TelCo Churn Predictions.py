@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1197]:
+# In[81]:
 
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import zipfile
+from pathlib import Path
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[1198]:
+# In[82]:
+
 if not Path("Ressources/Telco-Customer-Churn.csv").is_file():
     with zipfile.ZipFile("Ressources/Telco-Customer-Churn.csv", 'r') as zip_ref:
         zip_ref.extractall("Ressources")
@@ -19,19 +22,19 @@ if not Path("Ressources/Telco-Customer-Churn.csv").is_file():
 df = pd.read_csv(r"Ressources/Telco-Customer-Churn.csv")
 
 
-# In[1199]:
+# In[83]:
 
 
 df.head()
 
 
-# In[1200]:
+# In[84]:
 
 
 df.info()
 
 
-# In[1201]:
+# In[85]:
 
 
 # Insérez votre code ici
@@ -47,268 +50,299 @@ unique_values = set(liste_all)
 print(unique_values)
 
 
-# In[1202]:
+# In[86]:
 
 
 df.TotalCharges.replace({' ': np.nan}, inplace = True)
 df.TotalCharges = df.TotalCharges.astype(float)
 
 
-# In[1203]:
+# In[87]:
 
 
 df.TotalCharges.isna().sum()
 
 
-# In[1258]:
-
-
-sns.boxplot('TotalCharges', data = df)
-plt.title('Distribution of TotalCharges');
-
-
-# In[1259]:
-
-
-sns.boxplot('MonthlyCharges', data = df);
-plt.title('Distribution of MonthlyCharges');
-
-
-# In[1206]:
+# In[88]:
 
 
 for i,j in enumerate(df.TotalCharges) :
     df.TotalCharges.fillna(df['MonthlyCharges'][i]* df['tenure'][i], inplace = True)
 
 
-# In[1207]:
+# In[89]:
+
+
+import plotly.express as px
+fig = px.box(df, y='TotalCharges', title='Distribution of TotalCharges')
+fig.show()
+
+
+# In[90]:
+
+
+fig = px.box(df, y='MonthlyCharges', title='Distribution of MonthlyCharges')
+fig.show()
+
+
+# In[91]:
 
 
 df.describe()
 
 
-# In[1264]:
+# In[92]:
 
 
-plt.pie(df.Churn.value_counts(), labels = ['No','Yes'], autopct='%1.1f%%' )
-plt.title('Churn or Not');
+import plotly.express as px
+
+fig = px.pie(df, values=df.Churn.value_counts(), names=['No', 'Yes'], title='Churn or Not',
+             labels={'value': 'Count', 'names': 'Churn'})
+fig.show()
 
 
-# In[1214]:
+# In[93]:
 
 
-sns.histplot(x='Churn', hue = 'gender', data = df, multiple = 'dodge');
+import plotly.express as px
+
+fig = px.histogram(df, x='Churn', color='gender', barmode='group')
+fig.update_layout(title='Distribution of Churn by Gender')
+fig.show()
 
 
-# In[1215]:
+# In[94]:
 
 
 'There are similar churners rate for Male and Female customers'
 
 
-# In[1217]:
+# In[149]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'PaymentMethod', data = df, multiple = 'dodge', shrink = 0.8);
+
+fig = px.histogram(df, x='Churn', color='PaymentMethod')
+fig.update_layout(
+    xaxis_title='Churn',
+    yaxis_title='Count',
+    title='Count of Customers according to PaymentMethod and Churn'
+)
+fig.show()
 
 
-# In[1218]:
+# In[96]:
 
 
 'Most of churners pay by electronic check. In fact there are almost as many customers who churn as those who stay.'
 
 
-# In[1219]:
+# In[97]:
 
 
 df.InternetService.value_counts(normalize = True)
 
 
-# In[1220]:
+# In[147]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'InternetService', data = df, multiple="dodge", shrink = .8);
+
+fig = px.histogram(df, x='Churn', color='InternetService')
+fig.update_layout(
+    xaxis_title='Churn',
+    yaxis_title='Count',
+    title='Count of Customers according to InternetService and Churn'
+)
+fig.show()
 
 
-# In[1221]:
+# In[99]:
 
 
 'Most churners have a fiber optic InternetService'
 
 
-# In[1222]:
+# In[100]:
 
 
 df.SeniorCitizen.value_counts(normalize = True)
 
 
-# In[1223]:
+# In[151]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'SeniorCitizen', data = df, multiple="dodge", shrink = .8);
+
+fig = px.histogram(df, x='SeniorCitizen', color='Churn', barmode='group', nbins=2,
+                   labels={'SeniorCitizen': 'Senior Citizen', 'Churn': 'Churn'})
+fig.update_layout(title='Churn by Senior Citizen')
+fig.show()
 
 
-# In[1224]:
-
-
-plt.figure(figsize = (10,10))
-sns.histplot(x='SeniorCitizen', hue = 'Churn', data = df, multiple="dodge", shrink = .8);
-
-
-# In[1225]:
+# In[103]:
 
 
 'Even if Senior citizens are not the most seen category, we see a high rate of churners among them. Almost same quantity of churners and stayers.'
 
 
-# In[1226]:
+# In[152]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'MultipleLines', data = df, multiple="dodge", shrink = .8);
+fig = px.histogram(df, x='Churn', color='MultipleLines')
+fig.update_layout(
+    xaxis_title='Churn',
+    yaxis_title='Count',
+    title='Count of Partners according to MultipleLines'
+)
+fig.show()
 
 
-# In[1227]:
+# In[105]:
 
 
 'Among the churners, we observe less customers without phone service but the proportion of people with or without multiple lines is the same'
 
 
-# In[1228]:
+# In[106]:
 
 
 df.tenure.describe()
 
 
-# In[1229]:
+# In[107]:
 
 
 plt.figure(figsize = (10,10))
 sns.histplot(x='Churn', hue = pd.cut(df.tenure, bins = 4, labels = ['q1','q2','q3','q4']), data = df, multiple="dodge", shrink = .8);
 
 
-# In[1266]:
+# In[108]:
 
 
 'Most churners with tenure 0-9 months (duration of staying with the company for customer)'
 
 
-# In[1268]:
+# In[140]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'Partner', data = df, multiple="dodge", shrink = .8)
-plt.title('Count of Partners of the company according to churn');
 
 
-# In[1267]:
+fig = px.histogram(df, x='Churn', color='Partner')
+fig.update_layout(
+    xaxis_title='Churn',
+    yaxis_title='Partner Count',
+    title='Count of Partners according to Churn'
+)
+fig.show()
+
+
+# In[110]:
 
 
 'Most churners are not partners'
 
 
-# In[1269]:
+# In[153]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'OnlineSecurity', data = df, multiple="dodge", shrink = .8)
-plt.title('Count of different Online Security options according to Churn');
+fig = px.histogram(df, x='Churn', color='OnlineSecurity')
+fig.update_layout(
+    xaxis_title='Churn',
+    yaxis_title='Count',
+    title='Count of customers according to OnlineSecurity and Churn'
+)
+fig.show()
 
 
-# In[1234]:
+# In[112]:
 
 
 'most churners do not have Online Security option'
 
 
-# In[1235]:
+# In[113]:
 
 
 df.columns
 
 
-# In[1270]:
+# In[136]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'Contract', data = df, multiple="dodge", shrink = .8)
-plt.title('Count of different Contract types according to churn');
+fig = px.histogram(df, x='Contract', color='Churn')
+fig.update_layout(
+    xaxis_title='Contract',
+    yaxis_title='Count',
+    title='Count of different Contract types according to churn'
+)
+fig.show()
 
 
-# In[1237]:
+# In[115]:
 
 
 'Most churners have month-to-month contract'
 
 
-# In[1238]:
+# In[116]:
 
 
 df.groupby('Contract').median('MonthlyCharges')['MonthlyCharges'].round()
 
 
-# In[1271]:
+# In[118]:
 
 
-series = df.groupby('Contract').median('MonthlyCharges')['MonthlyCharges']
-plt.bar(series.index, series.values)
-plt.xlabel('Contract')
-plt.ylabel('Monthly Charges')
-plt.title('Median Monthly Charges by Contract');
+fig = px.bar(df.groupby('Contract').median('MonthlyCharges')['MonthlyCharges'].reset_index(), x='Contract', y='MonthlyCharges', color='Contract',
+             labels={'Contract': 'Contract', 'MonthlyCharges': 'Median Monthly Charges'},
+             title='Median Monthly Charges by Contract')
+fig.show()
 
 
-# In[1240]:
+# In[119]:
 
 
 'We see that median monthly charges of customers with Month to month contract is 4 units more than the one year contract and the one year contract 5 units more than the 2 year contract. There is no much variance between the values of the different categories. '
 
 
-# In[1241]:
+# In[135]:
 
 
-df.groupby('Churn').median('MonthlyCharges')['MonthlyCharges'].round()
+fig = px.bar(df.groupby('Churn').median('MonthlyCharges')['MonthlyCharges'].reset_index(), x='Churn', y='MonthlyCharges', color='Churn',
+             labels={'Churn': 'Churn', 'MonthlyCharges': 'Median Monthly Charges'},
+             title='Median Monthly Charges by Churn')
+fig.show()
 
 
-# In[1272]:
-
-
-series = df.groupby('Churn').median('MonthlyCharges')['MonthlyCharges']
-plt.bar(series.index, series.values)
-plt.xlabel('Churn')
-plt.ylabel('Monthly Charges')
-plt.title('Median Monthly Charges by Churn');
-
-
-# In[1243]:
+# In[122]:
 
 
 'But the monthly charges of the churners are much higher : 14 units more'
 
 
-# In[1273]:
+# In[154]:
 
 
-plt.figure(figsize = (10,10))
-sns.histplot(x='Churn', hue = 'TechSupport', data = df, multiple="dodge", shrink = .8)
-plt.title('Count of Tech Support options according to Churn');
+fig = px.histogram(df, x='Churn', color='TechSupport')
+fig.update_layout(
+    xaxis_title='Churn',
+    yaxis_title='Count',
+    title='Count of Tech Support options according to Churn'
+)
+fig.show()
 
 
-# In[1245]:
+# In[124]:
 
 
 'For most of the Churners there is TechSupport'
 
 
-# In[1246]:
+# In[125]:
 
 
 'To summarize : Customers tend to leave according to those significant parameters : Contract Month-to-Month, No Tech Support, stay 0 to 9 months with the company, InternetService : Fiber Optic, pay by electronic check, age category : SeniorCitizen, no Online Security. We will now analyse the monthly charges for those categories.'
 
 
-# In[1274]:
+# In[126]:
 
 
 import seaborn as sns
@@ -317,16 +351,16 @@ plt.figure(figsize=(10,10))
 ax = sns.barplot(x='InternetService', y='MonthlyCharges', data=df, hue = 'Churn')
 plt.xlabel('InternetService')
 plt.ylabel('MonthlyCharges')
-plt.title('Median MonthlyCharges by InternetService by Churn');
+plt.title('MonthlyCharges by InternetService by Churn');
+plt.show()
 
-
-# In[1248]:
+# In[127]:
 
 
 'We can also see that the charges for InternetService Fiber Optic are much higher than DSL. Which represents the category where there is the highest rate of churners.'
 
 
-# In[1275]:
+# In[128]:
 
 
 import seaborn as sns
@@ -336,9 +370,9 @@ ax = sns.barplot(x='PaymentMethod', y='MonthlyCharges', data=df, hue = 'Churn')
 plt.xlabel('PaymentMethod')
 plt.ylabel('MonthlyCharges')
 plt.title('Mean MonthlyCharges by PaymentMethod by Churn');
+plt.show()
 
-
-# In[1276]:
+# In[129]:
 
 
 
@@ -347,15 +381,15 @@ ax = sns.barplot(x='TechSupport', y='MonthlyCharges', data=df, hue = 'Churn')
 plt.xlabel('TechSupport')
 plt.ylabel('MonthlyCharges')
 plt.title('Mean MonthlyCharges by TechSupport by Churn');
+plt.show()
 
-
-# In[1251]:
+# In[130]:
 
 
 'We observe that the most related features to churns have also the most expensive monthly charges comparing to other values of respective categories.' 
 
 
-# In[1277]:
+# In[131]:
 
 
 
@@ -364,27 +398,27 @@ ax = sns.barplot(x='OnlineSecurity', y='MonthlyCharges', data=df, hue = 'Churn')
 plt.xlabel('OnlineSecurity')
 plt.ylabel('MonthlyCharges')
 plt.title('Mean MonthlyCharges by OnlineSecurity by Churn');
+plt.show()
 
-
-# In[1253]:
+# In[132]:
 
 
 df.groupby(['Contract', 'TechSupport', 'Churn']).mean('MonthlyCharges')['MonthlyCharges']
 
 
-# In[1278]:
+# In[133]:
 
 
 'Among the most expensive functionalities, we see fiber optic for internet service. And as we saw before, a majority of churners didn"t take the option Tech Support and Online Support. An interpretation could be that customers who took this internet service and no support nor online security were not using well the functionalities and did not use the fiber optic to the fullest. Paying high monthly charges, they did not want to proceed the contract because they did not see their interest.'
 
 
-# In[1142]:
+# In[55]:
 
 
 "Let's now analyse the feature importances regarding the class churner"
 
 
-# In[1143]:
+# In[56]:
 
 
 'First we need to change all the categorical non numerical values into numerical ones.'
@@ -413,16 +447,58 @@ df['Contract'].replace({'Month-to-month':0, 'One year':1, 'Two year':2}, inplace
 df_train = pd.concat([pd.get_dummies(df.PaymentMethod), df], axis =1).drop('customerID', axis =1)
 
 
-# In[1144]:
+# In[57]:
 
 
 df_train.drop('PaymentMethod', axis=1, inplace = True)
 
 
-# In[1145]:
+# In[58]:
 
 
-sns.heatmap(df_train.corr())
+corr_matrix = df.corr()
+
+
+# In[73]:
+
+
+fig, ax = plt.subplots(figsize=(10,8))
+ax.set_facecolor('white')
+ax.imshow(np.ones_like(corr_matrix), cmap='gray_r', interpolation='nearest')
+
+# set the tick labels and rotation for the x and y axes
+ax.set_xticks(np.arange(len(corr_matrix.columns)) + 0.5)
+ax.set_yticks(np.arange(len(corr_matrix.columns)) + 0.5)
+
+# format ticks
+ax.set_yticklabels(corr_matrix.columns, fontsize=10)
+ax.set_xticklabels(corr_matrix.columns, fontsize=10, rotation = 45, ha='right')
+
+# create circles with radius proportional to the absolute value of correlation
+for i in range(len(corr_matrix.columns)):
+    for j in range(len(corr_matrix.columns)):
+        correlation = corr_matrix.iat[i, j]
+        norm = plt.Normalize(-1, 1)  # specify the range of values for the colormap
+        sm = plt.cm.ScalarMappable(norm=norm, cmap='coolwarm')
+        color = sm.to_rgba(correlation)
+        circle = Circle((i+0.5, j+0.5), radius=abs(correlation)/2.5, facecolor=color)
+        ax.add_patch(circle)
+
+# create grid lines between the cells of the heatmap
+ax.set_xticks(np.arange(len(corr_matrix.columns) + 1), minor=True)
+ax.set_yticks(np.arange(len(corr_matrix.columns) + 1), minor=True)
+ax.grid(which="minor", color="lightgray", linestyle="solid", linewidth=2)
+
+# add rectangle around the grid
+rect = plt.Rectangle((0, 0), len(corr_matrix.columns), len(corr_matrix.columns), linewidth=5, edgecolor='lightgray', facecolor='none')
+ax.add_patch(rect)
+
+# add color bar
+norm = mcolors.Normalize(vmin=-1, vmax=1)
+c_scale = plt.cm.ScalarMappable(norm=norm, cmap='coolwarm')
+cbar = plt.colorbar(c_scale, ax=ax)
+
+plt.show()
 
 
 # In[1146]:
@@ -499,7 +575,7 @@ y_probas = rf.predict_proba(X_test_scaled)
 import scikitplot as skplt
 from scikitplot import metrics
 metrics.plot_cumulative_gain(y_test, y_probas)
-
+plt.show()
 
 # In[1161]:
 
@@ -574,26 +650,20 @@ y_probas2 = rf2.predict_proba(X_test_scaled)
 # In[1172]:
 
 
-import scikitplot as skplt
-from scikitplot import metrics
 metrics.plot_cumulative_gain(y_test, y_probas)
-
+plt.show()
 
 # In[ ]:
 
 
-import scikitplot as skplt
-from scikitplot import metrics
 metrics.plot_cumulative_gain(y_test, y_probas1)
-
+plt.show()
 
 # In[ ]:
 
 
-import scikitplot as skplt
-from scikitplot import metrics
 metrics.plot_cumulative_gain(y_test, y_probas2)
-
+plt.show()
 
 # In[1175]:
 
