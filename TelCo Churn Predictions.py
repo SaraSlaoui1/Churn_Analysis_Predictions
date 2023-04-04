@@ -1,40 +1,35 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[81]:
+# In[1]:
 
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import zipfile
-from pathlib import Path
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[82]:
-
-if not Path("Ressources/Telco-Customer-Churn.csv").is_file():
-    with zipfile.ZipFile("Ressources/Telco-Customer-Churn.csv", 'r') as zip_ref:
-        zip_ref.extractall("Ressources")
-
-df = pd.read_csv(r"Ressources/Telco-Customer-Churn.csv")
+# In[2]:
 
 
-# In[83]:
+df = pd.read_csv(r"C:\Users\Hassan\Documents\datascientest\Data Sets to train\Churns\Ressources\Telco-Customer-Churn.csv")
+
+
+# In[3]:
 
 
 df.head()
 
 
-# In[84]:
+# In[4]:
 
 
 df.info()
 
 
-# In[85]:
+# In[5]:
 
 
 # Insérez votre code ici
@@ -50,27 +45,27 @@ unique_values = set(liste_all)
 print(unique_values)
 
 
-# In[86]:
+# In[6]:
 
 
 df.TotalCharges.replace({' ': np.nan}, inplace = True)
 df.TotalCharges = df.TotalCharges.astype(float)
 
 
-# In[87]:
+# In[7]:
 
 
 df.TotalCharges.isna().sum()
 
 
-# In[88]:
+# In[8]:
 
 
 for i,j in enumerate(df.TotalCharges) :
     df.TotalCharges.fillna(df['MonthlyCharges'][i]* df['tenure'][i], inplace = True)
 
 
-# In[89]:
+# In[9]:
 
 
 import plotly.express as px
@@ -78,20 +73,20 @@ fig = px.box(df, y='TotalCharges', title='Distribution of TotalCharges')
 fig.show()
 
 
-# In[90]:
+# In[10]:
 
 
 fig = px.box(df, y='MonthlyCharges', title='Distribution of MonthlyCharges')
 fig.show()
 
 
-# In[91]:
+# In[11]:
 
 
 df.describe()
 
 
-# In[92]:
+# In[12]:
 
 
 import plotly.express as px
@@ -101,7 +96,7 @@ fig = px.pie(df, values=df.Churn.value_counts(), names=['No', 'Yes'], title='Chu
 fig.show()
 
 
-# In[93]:
+# In[13]:
 
 
 import plotly.express as px
@@ -111,13 +106,13 @@ fig.update_layout(title='Distribution of Churn by Gender')
 fig.show()
 
 
-# In[94]:
+# In[14]:
 
 
 'There are similar churners rate for Male and Female customers'
 
 
-# In[149]:
+# In[15]:
 
 
 
@@ -130,19 +125,19 @@ fig.update_layout(
 fig.show()
 
 
-# In[96]:
+# In[16]:
 
 
 'Most of churners pay by electronic check. In fact there are almost as many customers who churn as those who stay.'
 
 
-# In[97]:
+# In[17]:
 
 
 df.InternetService.value_counts(normalize = True)
 
 
-# In[147]:
+# In[18]:
 
 
 
@@ -155,19 +150,19 @@ fig.update_layout(
 fig.show()
 
 
-# In[99]:
+# In[19]:
 
 
 'Most churners have a fiber optic InternetService'
 
 
-# In[100]:
+# In[20]:
 
 
 df.SeniorCitizen.value_counts(normalize = True)
 
 
-# In[151]:
+# In[21]:
 
 
 
@@ -177,13 +172,13 @@ fig.update_layout(title='Churn by Senior Citizen')
 fig.show()
 
 
-# In[103]:
+# In[22]:
 
 
 'Even if Senior citizens are not the most seen category, we see a high rate of churners among them. Almost same quantity of churners and stayers.'
 
 
-# In[152]:
+# In[23]:
 
 
 fig = px.histogram(df, x='Churn', color='MultipleLines')
@@ -195,32 +190,32 @@ fig.update_layout(
 fig.show()
 
 
-# In[105]:
+# In[24]:
 
 
 'Among the churners, we observe less customers without phone service but the proportion of people with or without multiple lines is the same'
 
 
-# In[106]:
+# In[25]:
 
 
 df.tenure.describe()
 
 
-# In[107]:
+# In[26]:
 
 
 plt.figure(figsize = (10,10))
 sns.histplot(x='Churn', hue = pd.cut(df.tenure, bins = 4, labels = ['q1','q2','q3','q4']), data = df, multiple="dodge", shrink = .8);
 
 
-# In[108]:
+# In[27]:
 
 
 'Most churners with tenure 0-9 months (duration of staying with the company for customer)'
 
 
-# In[140]:
+# In[28]:
 
 
 
@@ -234,13 +229,13 @@ fig.update_layout(
 fig.show()
 
 
-# In[110]:
+# In[29]:
 
 
 'Most churners are not partners'
 
 
-# In[153]:
+# In[30]:
 
 
 fig = px.histogram(df, x='Churn', color='OnlineSecurity')
@@ -252,19 +247,19 @@ fig.update_layout(
 fig.show()
 
 
-# In[112]:
+# In[31]:
 
 
 'most churners do not have Online Security option'
 
 
-# In[113]:
+# In[32]:
 
 
 df.columns
 
 
-# In[136]:
+# In[33]:
 
 
 fig = px.histogram(df, x='Contract', color='Churn')
@@ -276,19 +271,19 @@ fig.update_layout(
 fig.show()
 
 
-# In[115]:
+# In[34]:
 
 
 'Most churners have month-to-month contract'
 
 
-# In[116]:
+# In[35]:
 
 
 df.groupby('Contract').median('MonthlyCharges')['MonthlyCharges'].round()
 
 
-# In[118]:
+# In[36]:
 
 
 fig = px.bar(df.groupby('Contract').median('MonthlyCharges')['MonthlyCharges'].reset_index(), x='Contract', y='MonthlyCharges', color='Contract',
@@ -297,13 +292,13 @@ fig = px.bar(df.groupby('Contract').median('MonthlyCharges')['MonthlyCharges'].r
 fig.show()
 
 
-# In[119]:
+# In[37]:
 
 
 'We see that median monthly charges of customers with Month to month contract is 4 units more than the one year contract and the one year contract 5 units more than the 2 year contract. There is no much variance between the values of the different categories. '
 
 
-# In[135]:
+# In[38]:
 
 
 fig = px.bar(df.groupby('Churn').median('MonthlyCharges')['MonthlyCharges'].reset_index(), x='Churn', y='MonthlyCharges', color='Churn',
@@ -312,13 +307,13 @@ fig = px.bar(df.groupby('Churn').median('MonthlyCharges')['MonthlyCharges'].rese
 fig.show()
 
 
-# In[122]:
+# In[39]:
 
 
 'But the monthly charges of the churners are much higher : 14 units more'
 
 
-# In[154]:
+# In[40]:
 
 
 fig = px.histogram(df, x='Churn', color='TechSupport')
@@ -330,19 +325,19 @@ fig.update_layout(
 fig.show()
 
 
-# In[124]:
+# In[41]:
 
 
 'For most of the Churners there is TechSupport'
 
 
-# In[125]:
+# In[42]:
 
 
 'To summarize : Customers tend to leave according to those significant parameters : Contract Month-to-Month, No Tech Support, stay 0 to 9 months with the company, InternetService : Fiber Optic, pay by electronic check, age category : SeniorCitizen, no Online Security. We will now analyse the monthly charges for those categories.'
 
 
-# In[126]:
+# In[43]:
 
 
 import seaborn as sns
@@ -352,15 +347,15 @@ ax = sns.barplot(x='InternetService', y='MonthlyCharges', data=df, hue = 'Churn'
 plt.xlabel('InternetService')
 plt.ylabel('MonthlyCharges')
 plt.title('MonthlyCharges by InternetService by Churn');
-plt.show()
 
-# In[127]:
+
+# In[44]:
 
 
 'We can also see that the charges for InternetService Fiber Optic are much higher than DSL. Which represents the category where there is the highest rate of churners.'
 
 
-# In[128]:
+# In[45]:
 
 
 import seaborn as sns
@@ -370,9 +365,9 @@ ax = sns.barplot(x='PaymentMethod', y='MonthlyCharges', data=df, hue = 'Churn')
 plt.xlabel('PaymentMethod')
 plt.ylabel('MonthlyCharges')
 plt.title('Mean MonthlyCharges by PaymentMethod by Churn');
-plt.show()
 
-# In[129]:
+
+# In[46]:
 
 
 
@@ -381,15 +376,15 @@ ax = sns.barplot(x='TechSupport', y='MonthlyCharges', data=df, hue = 'Churn')
 plt.xlabel('TechSupport')
 plt.ylabel('MonthlyCharges')
 plt.title('Mean MonthlyCharges by TechSupport by Churn');
-plt.show()
 
-# In[130]:
+
+# In[47]:
 
 
 'We observe that the most related features to churns have also the most expensive monthly charges comparing to other values of respective categories.' 
 
 
-# In[131]:
+# In[48]:
 
 
 
@@ -398,27 +393,27 @@ ax = sns.barplot(x='OnlineSecurity', y='MonthlyCharges', data=df, hue = 'Churn')
 plt.xlabel('OnlineSecurity')
 plt.ylabel('MonthlyCharges')
 plt.title('Mean MonthlyCharges by OnlineSecurity by Churn');
-plt.show()
 
-# In[132]:
+
+# In[49]:
 
 
 df.groupby(['Contract', 'TechSupport', 'Churn']).mean('MonthlyCharges')['MonthlyCharges']
 
 
-# In[133]:
+# In[50]:
 
 
 'Among the most expensive functionalities, we see fiber optic for internet service. And as we saw before, a majority of churners didn"t take the option Tech Support and Online Support. An interpretation could be that customers who took this internet service and no support nor online security were not using well the functionalities and did not use the fiber optic to the fullest. Paying high monthly charges, they did not want to proceed the contract because they did not see their interest.'
 
 
-# In[55]:
+# In[51]:
 
 
 "Let's now analyse the feature importances regarding the class churner"
 
 
-# In[56]:
+# In[52]:
 
 
 'First we need to change all the categorical non numerical values into numerical ones.'
@@ -447,20 +442,23 @@ df['Contract'].replace({'Month-to-month':0, 'One year':1, 'Two year':2}, inplace
 df_train = pd.concat([pd.get_dummies(df.PaymentMethod), df], axis =1).drop('customerID', axis =1)
 
 
-# In[57]:
+# In[53]:
 
 
 df_train.drop('PaymentMethod', axis=1, inplace = True)
 
 
-# In[58]:
+# In[54]:
 
 
 corr_matrix = df.corr()
 
 
-# In[73]:
+# In[60]:
 
+
+from matplotlib.patches import Circle
+from matplotlib import colors as mcolors
 
 fig, ax = plt.subplots(figsize=(10,8))
 ax.set_facecolor('white')
@@ -501,27 +499,27 @@ cbar = plt.colorbar(c_scale, ax=ax)
 plt.show()
 
 
-# In[1146]:
+# In[61]:
 
 
 'According to the heatmap, the features that seem to be the most correlated to the churner classes are : Electronic check, InternetService, tenure, Contract.'
 
 
-# In[1147]:
+# In[62]:
 
 
 data = df_train.drop('Churn', axis = 1)
 target = df_train['Churn']
 
 
-# In[1148]:
+# In[63]:
 
 
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(data, target, test_size = 0.2, random_state = 123)
 
 
-# In[1149]:
+# In[64]:
 
 
 from sklearn.preprocessing import StandardScaler
@@ -530,7 +528,7 @@ X_train_scaled = sc.fit_transform(X_train)
 X_test_scaled = sc.transform(X_test)
 
 
-# In[1150]:
+# In[65]:
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -539,7 +537,7 @@ clf.fit(X_train_scaled,y_train)
 y_probas = clf.predict_proba(X_test_scaled)
 
 
-# In[1156]:
+# In[66]:
 
 
 from sklearn.tree import DecisionTreeClassifier
@@ -561,7 +559,7 @@ print("Best parameters: {}".format(grid_search.best_params_))
 print("Best score: {:.2f}".format(grid_search.best_score_))
 
 
-# In[1157]:
+# In[67]:
 
 
 rf = RandomForestClassifier(max_depth = 5, min_samples_split = 2, n_estimators = 10)
@@ -569,15 +567,15 @@ rf.fit(X_train_scaled,y_train)
 y_probas = rf.predict_proba(X_test_scaled)
 
 
-# In[1158]:
+# In[68]:
 
 
 import scikitplot as skplt
 from scikitplot import metrics
 metrics.plot_cumulative_gain(y_test, y_probas)
-plt.show()
 
-# In[1161]:
+
+# In[69]:
 
 
 from imblearn.over_sampling import RandomOverSampler, SMOTE
@@ -587,7 +585,7 @@ print(dict(pd.Series(y_ro).value_counts()))
 print(dict(pd.Series(y_sm).value_counts()))
 
 
-# In[1163]:
+# In[70]:
 
 
 from imblearn.metrics import classification_report_imbalanced
@@ -601,13 +599,13 @@ pd.crosstab(y_predi,y_test,rownames=['classe prédite'], colnames=['classe réel
 print(classification_report_imbalanced(y_test, y_predi,target_names = ['class 0', 'class 1']))
 
 
-# In[1164]:
+# In[71]:
 
 
 rf1.score(X_test, y_test)
 
 
-# In[1167]:
+# In[72]:
 
 
 from imblearn.under_sampling import RandomUnderSampler, ClusterCentroids
@@ -616,7 +614,7 @@ X_ru,y_ru = RandomUnderSampler().fit_resample(X_train,y_train)
 X_cc,y_cc = ClusterCentroids().fit_resample(X_train,y_train)
 
 
-# In[1168]:
+# In[73]:
 
 
 rf2 = RandomForestClassifier(max_depth = 5, min_samples_split = 2, n_estimators = 10)
@@ -628,50 +626,50 @@ pd.crosstab(y_predi,y_test,rownames=['classe prédite'], colnames=['classe réel
 print(classification_report_imbalanced(y_test, y_predi,target_names = ['class 0', 'class 1']))
 
 
-# In[1169]:
+# In[74]:
 
 
 rf2.score(X_test, y_test)
 
 
-# In[1170]:
+# In[75]:
 
 
 'I tried many options to improve the accuracy of the model but the best one : RandomForest was the best without resampling it.'
 
 
-# In[1171]:
+# In[76]:
 
 
 y_probas1 = rf1.predict_proba(X_test_scaled)
 y_probas2 = rf2.predict_proba(X_test_scaled)
 
 
-# In[1172]:
+# In[77]:
 
 
 metrics.plot_cumulative_gain(y_test, y_probas)
-plt.show()
 
-# In[ ]:
+
+# In[78]:
 
 
 metrics.plot_cumulative_gain(y_test, y_probas1)
-plt.show()
 
-# In[ ]:
+
+# In[79]:
 
 
 metrics.plot_cumulative_gain(y_test, y_probas2)
-plt.show()
 
-# In[1175]:
+
+# In[80]:
 
 
 'We see it clearly by the cumulative gain curve that the first is the most relevant one. And it means that the 40 pourcent of customers having the best score (the ones with the higher probability of becoming churners) around 80 % are actual churners. '
 
 
-# In[1176]:
+# In[81]:
 
 
 features = data.columns
@@ -683,13 +681,13 @@ sorted_features = sorted(features_importance.items(), key=lambda x:x[1], reverse
 print(sorted_features[:8])
 
 
-# In[1279]:
+# In[82]:
 
 
 'In the feature importances, the one that are relevant by explaining the choice of leaving for the customers are the Charges. And this feature, as I interpretated before is linked to the following ones : OnlineSecurity, InternetService and TechSupport.'
 
 
-# In[1265]:
+# In[83]:
 
 
 'According to the previous observation, a solution to prevent churns would be to reduce the price of the Month-to-Month contract but the income would also decrease. So the solution would be directed to the better understanding of the client about the tools included in his/her contract. A way would be for example to target (thanks to the predictions and cumulative gain curve) the potential churners and discuss a preferential offer on the tech support and online security. Next step would be to change the Month-to-Month contract to a year or two year one and automatic payment method to ensure that the customer would stay long enough to use all the tools and increase customer satisfaction'
